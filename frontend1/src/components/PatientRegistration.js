@@ -19,10 +19,14 @@ function PatientRegistration() {
     try {
       // Blockchain transaction
       const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = provider.getSigner();
+
+      await provider.send("eth_requestAccounts", []);
+
+      const signer = await provider.getSigner();
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
-      const tx = await contract.registerPatient(patientAddress, name);
+
+      const tx = await contract.registerPatient(name,age,photo);
       await tx.wait();
 
       // Save to MongoDB

@@ -17,10 +17,14 @@ function BookAppointment() {
     try {
       // Blockchain transaction
       const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = provider.getSigner();
+
+      await provider.send("eth_requestAccounts", []);
+
+      const signer = await provider.getSigner();
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
-      const tx = await contract.bookAppointment(patientAddress, doctorAddress, date);
+
+      const tx = await contract.createAppointment(patientAddress, doctorAddress, date);
       await tx.wait();
 
       // MongoDB data saving

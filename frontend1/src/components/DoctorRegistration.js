@@ -1,37 +1,53 @@
-// src/components/DoctorRegistration.js
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import ABI from "../ABI.json";
 import axios from 'axios';
-
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 
 
 function DoctorRegistration() {
-  const [doctorAddress, setDoctorAddress] = useState('');
+  const [licenseNumber, setlicenseNumber] = useState('');
   const [doctorName, setDoctorName] = useState('');
   const [specialization, setSpecialization] = useState('');
   const [status, setStatus] = useState('');
-
+  const [hash,sethash]=useState('');
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("doctor register");
 
     try {
-      // Register doctor on Blockchain and save to MongoDB via backend
-      const response = await axios.post('http://localhost:5000/doctors/register', {
-        doctorAddress,
-        doctorName,
-        specialization
-      });
 
-      if (response.status === 201) {
-        setStatus('Doctor registered successfully and saved to MongoDB!');
-      } else {
-        setStatus('Error saving doctor to MongoDB.');
+      const provider = new ethers.BrowserProvider(window.ethereum);
+
+      await provider.send("eth_requestAccounts", []);
+
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, ABI, signer);
+
+      const tx = await contract.registerDoctor(licenseNumber, doctorName, specialization);
+      await tx.wait();
+      console.log('Transaction:', tx);
+      sethash(tx.hash);
+      if (tx.hash) {
+        const response = await axios.post("http://localhost:5000/doctors/register", {
+          licenseNumber,
+          doctorName,
+          specialization,
+          hash: tx.hash  
+        });
+  
+        if (response.status === 201) {
+          setStatus('Doctor registered successfully and saved to MongoDB!');
+        } else {
+          setStatus("Error saving data to the database");
+        }
       }
+     
     } catch (error) {
       console.error(error.response.data); 
     }
+    
   };
 
   return (
@@ -40,9 +56,9 @@ function DoctorRegistration() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          value={doctorAddress}
-          onChange={(e) => setDoctorAddress(e.target.value)}
-          placeholder="Doctor Address"
+          value={licenseNumber}
+          onChange={(e) => setlicenseNumber(e.target.value)}
+          placeholder="Doctor License Number"
           required
         />
         <input

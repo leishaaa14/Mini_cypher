@@ -9,6 +9,7 @@ const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 function HealthData() {
   const [patientAddress, setPatientAddress] = useState('');
   const [healthData, setHealthData] = useState('');
+  const [token,settoken]=useState('');
   const [status, setStatus] = useState('');
 
   const handleSubmit = async (e) => {
@@ -16,10 +17,13 @@ function HealthData() {
     try {
       // Blockchain transaction
       const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
-      const tx = await contract.addHealthData(patientAddress, healthData);
+      await provider.send("eth_requestAccounts", []);
+
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+     
+      const tx = await contract.addHealthData(patientAddress,token, healthData);
       await tx.wait();
 
       // MongoDB data saving
@@ -44,6 +48,13 @@ function HealthData() {
           value={patientAddress}
           onChange={(e) => setPatientAddress(e.target.value)}
           placeholder="Patient Address"
+          required
+        />
+         <input
+          type="text"
+          value={token}
+          onChange={(e) => settoken(e.target.value)}
+          placeholder="token"
           required
         />
         <input
