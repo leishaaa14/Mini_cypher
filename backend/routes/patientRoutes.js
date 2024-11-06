@@ -4,10 +4,11 @@ const router = express.Router();
 
 // Route to save patient data
 router.post('/register', async (req, res) => {
-  const { patientAddress, patientName } = req.body;
-
+  console.log("patient info");
+  const { address, name ,patientId,age,photo} = req.body;
+  console.log(req.body);
   try {
-    const newPatient = new Patient({ patientAddress, patientName });
+    const newPatient = new Patient({ address, name ,patientId,age,photo });
     await newPatient.save();
     res.status(201).json({ message: 'Patient saved successfully' });
   } catch (error) {
