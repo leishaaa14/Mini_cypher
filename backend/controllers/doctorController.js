@@ -8,7 +8,7 @@ const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const provider = new ethers.JsonRpcProvider("http://localhost:8545"); 
 
 exports.registerDoctor = async (req, res) => {
-<<<<<<< Updated upstream
+
     const { doctorAddress, doctorName, specialization } = req.body;
 
     try {
@@ -34,22 +34,5 @@ exports.registerDoctor = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error registering doctor: ' + error.message });
     }
-=======
-  const { doctorName, specialization, licenseNumber, hash } = req.body;
-  console.log(" data:", req.body);
 
-  try {
-    const doctor = new Doctor({
-      doctorName,
-      specialization,
-      hash,
-      licenseNumber
-    });
-    await doctor.save();
-    res.status(201).json({ message: "Doctor registered successfully" });
-  } catch (error) {
-    console.error("Error while registering doctor:", error); 
-    res.status(500).json({ error: error.message });
-  }
->>>>>>> Stashed changes
 };

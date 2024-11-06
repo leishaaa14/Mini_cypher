@@ -8,15 +8,11 @@ const healthDataRoutes = require('./routes/healthDataRoutes');
 require('dotenv').config(); 
 
 const app = express();
-<<<<<<< Updated upstream
+
 const cors = require('cors');
 app.use(cors({ origin: 'http://localhost:3000' }));
 
-=======
-app.use(cors({
-  origin:'http://localhost:3000'
-}))
->>>>>>> Stashed changes
+
 app.use(express.json());
 
 // Connect to MongoDB
